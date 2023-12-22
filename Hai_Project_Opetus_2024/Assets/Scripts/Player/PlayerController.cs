@@ -48,6 +48,9 @@ public class PlayerController : MonoBehaviour
 
     private void Update()
     {
+        TogglePause();
+        if (!GameManager.Instance.IsGameplay()) return;
+
         // Check for controller or keyboard input
         if (controls.Gameplay.Move.ReadValue<Vector2>().sqrMagnitude > 0.1)
         {
@@ -79,7 +82,7 @@ public class PlayerController : MonoBehaviour
         //controls.Gameplay.Shoot.ReadValue<float>() > 0.1f jos haluaa että voi ampua nappipohjassa
         if (controls.Gameplay.Shoot.triggered && Time.time >= nextFireTime)
         {
-            nextFireTime = Time.time + 1f / fireRate;
+            nextFireTime = Time.time + fireRate;
 
             GameObject bullet = BulletPoolManager.Instance.GetBullet();
             bullet.transform.position = gunTransform.position;
@@ -92,7 +95,22 @@ public class PlayerController : MonoBehaviour
             Debug.Log("Fire!");
         }
     }
+    private void TogglePause()
+    {
 
+        if (controls.Gameplay.Pause.triggered)
+        
+
+            if (GameManager.Instance.IsGameplay())
+            {
+                GameManager.Instance.ChangeState(GameState.Pause);
+            }
+            else
+            {
+                GameManager.Instance.ChangeState(GameState.Gameplay);
+            }
+    }
+    
     private void AimWithMouse()
     {
         aim = controls.Gameplay.Aim.ReadValue<Vector2>();
@@ -134,6 +152,8 @@ public class PlayerController : MonoBehaviour
     // Update is called once per frame
     void FixedUpdate()
     {
+        if (!GameManager.Instance.IsGameplay()) return;
+
         Move();
     }
 

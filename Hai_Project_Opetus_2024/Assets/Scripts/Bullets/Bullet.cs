@@ -23,6 +23,7 @@ public class Bullet : MonoBehaviour
 
     void Update()
     {
+        if (!GameManager.Instance.IsGameplay()) return;
         // Move the bullet forward
         if (bulletData != null)
         {
@@ -41,6 +42,13 @@ public class Bullet : MonoBehaviour
 
     private void OnTriggerEnter2D(Collider2D collision)
     {
-        BulletPoolManager.Instance.ReturnBullet(gameObject);
+        IDamageable damageable = collision.GetComponent<IDamageable>();
+        if (damageable != null)
+        {
+            damageable.TakeDamage(bulletData.damage); // Assuming each bullet does 1 damage
+            BulletPoolManager.Instance.ReturnBullet(gameObject); // Return the bullet to the pool
+        }
     }
+
+
 }
