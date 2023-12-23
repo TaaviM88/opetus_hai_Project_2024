@@ -163,4 +163,12 @@ public class PlayerController : MonoBehaviour
         Vector2 movement = new Vector2(move.x, move.y) * moveSpeed * Time.fixedDeltaTime;
         rb.MovePosition(rb.position + movement);
     }
+    private void OnTriggerEnter2D(Collider2D collision)
+    {
+        IPickable pickable = collision.GetComponent<IPickable>();
+        if (pickable != null)
+        {
+            pickable.PickUp();
+        }
+    }
 }

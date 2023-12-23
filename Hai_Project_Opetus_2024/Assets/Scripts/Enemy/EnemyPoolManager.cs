@@ -57,12 +57,13 @@ public class EnemyPoolManager : MonoBehaviour
     public void EnemyDefeated(Vector3 position, int score)
     {
         // Instantiate the score display at the enemy's position
-         GameObject effect = Instantiate(dieEffect, position, Quaternion.identity);
+        GameObject effect = Instantiate(dieEffect, position, Quaternion.identity);
         GameObject scoreDisplay = Instantiate(scoreDisplayPrefab, position, Quaternion.identity);
         ScorePopUp displayScript = scoreDisplay.GetComponent<ScorePopUp>();
         if (displayScript != null)
         {
-             displayScript.SetScore(score); // Set this to the score value from the enemy data
+            int totalScore = score * UIManager.Instance.GetCurrentComboMultiplier();
+            displayScript.SetScore(totalScore); // Set this to the score value from the enemy data
         }
     }
 

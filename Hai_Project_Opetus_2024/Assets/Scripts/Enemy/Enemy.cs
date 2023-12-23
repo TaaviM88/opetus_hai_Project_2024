@@ -6,6 +6,8 @@ public class Enemy : MonoBehaviour, IDamageable
 {
     public EnemyData enemyData { get; set; } // Assign this in the inspector or when spawning the enemy
     public TMP_Text tmpText;
+    public float shakeDuration = 1f;
+    private ShakeBehavior shake;
     private int currentHealth;
     private Transform playerTransform;
     private Rigidbody2D rb;
@@ -13,17 +15,13 @@ public class Enemy : MonoBehaviour, IDamageable
     private void Awake()
     {
         rb = GetComponent<Rigidbody2D>(); // Get the Rigidbody2D component
+        shake = GetComponent<ShakeBehavior>();
+        shake.enabled = false;
     }
 
     private void OnEnable()
     {
-        if(enemyData == null)
-        {
-            Debug.Log("Missing enemydata " + enemyData);
-            return;
-        }
-        Debug.Log("Let set current health!");
-        currentHealth = enemyData.health; // Initialize health when the enemy is spawned
+        
     }
 
     private void Start()
@@ -48,6 +46,10 @@ public class Enemy : MonoBehaviour, IDamageable
     {
         UIManager.Instance.AddScore(enemyData.scoreValue);
         EnemyPoolManager.Instance.EnemyDefeated(transform.position, enemyData.scoreValue);
+        if (Random.value < enemyData.dropChance)
+        {
+            Instantiate(enemyData.dropPrefab, transform.position, Quaternion.identity);
+        }
         gameObject.SetActive(false);
     }
 
@@ -66,7 +68,10 @@ public class Enemy : MonoBehaviour, IDamageable
         }
         else
         {
+
             EnemyPoolManager.Instance.SpawnDamageNumber(transform.position, damage);
+            shake.enabled = true;
+            shake.TriggerShake(shakeDuration);
 
         }
     }
