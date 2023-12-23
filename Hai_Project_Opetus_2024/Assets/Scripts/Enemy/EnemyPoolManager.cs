@@ -1,12 +1,17 @@
 using System.Collections;
 using System.Collections.Generic;
 using UnityEngine;
+using UnityEngine.Rendering;
+using UnityEngine.SocialPlatforms.Impl;
+using UnityEngine.UIElements;
 
 public class EnemyPoolManager : MonoBehaviour
 {
     public static EnemyPoolManager Instance;
 
     public GameObject enemyPrefab; // The enemy prefab you want to pool
+    public GameObject scoreDisplayPrefab;
+    public GameObject dieEffect;
     public int poolSize = 10; // Initial size of the pool
 
     private Queue<GameObject> enemyPool = new Queue<GameObject>();
@@ -49,4 +54,23 @@ public class EnemyPoolManager : MonoBehaviour
         enemy.SetActive(false);
         enemyPool.Enqueue(enemy);
     }
+    public void EnemyDefeated(Vector3 position, int score)
+    {
+        // Instantiate the score display at the enemy's position
+         GameObject effect = Instantiate(dieEffect, position, Quaternion.identity);
+        GameObject scoreDisplay = Instantiate(scoreDisplayPrefab, position, Quaternion.identity);
+        ScorePopUp displayScript = scoreDisplay.GetComponent<ScorePopUp>();
+        if (displayScript != null)
+        {
+             displayScript.SetScore(score); // Set this to the score value from the enemy data
+        }
+    }
+
+    public void SpawnDamageNumber(Vector3 position, int damage)
+    {
+        GameObject scoreDisplay = Instantiate(scoreDisplayPrefab, position, Quaternion.identity);
+        ScorePopUp displayScript = scoreDisplay.GetComponent<ScorePopUp>();
+        displayScript.SetScore(damage);
+    }
+    
 }

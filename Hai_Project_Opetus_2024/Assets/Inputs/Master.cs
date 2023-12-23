@@ -232,6 +232,17 @@ public partial class @Master: IInputActionCollection2, IDisposable
                 },
                 {
                     ""name"": """",
+                    ""id"": ""89774368-dda1-4f1a-a8d5-053906ec812c"",
+                    ""path"": ""<Keyboard>/space"",
+                    ""interactions"": """",
+                    ""processors"": """",
+                    ""groups"": """",
+                    ""action"": ""Shoot"",
+                    ""isComposite"": false,
+                    ""isPartOfComposite"": false
+                },
+                {
+                    ""name"": """",
                     ""id"": ""d71890d0-3940-4498-8876-286f55317ef3"",
                     ""path"": ""<Mouse>/rightButton"",
                     ""interactions"": """",

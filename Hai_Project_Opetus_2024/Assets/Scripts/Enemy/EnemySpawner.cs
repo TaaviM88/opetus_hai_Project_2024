@@ -41,6 +41,7 @@ public class EnemySpawner : MonoBehaviour
         if (enemyScript != null)
         {
             enemyScript.enemyData = enemyTypes[Random.Range(0, enemyTypes.Length)];
+            enemyScript.SetHealth();
         }
     }
 }

@@ -9,4 +9,5 @@ public class EnemyData : ScriptableObject
     public string description = "";
     public float speed = 3f; // Movement speed of the enemy
     public int health = 10; // Health of the enemy
+    public int scoreValue = 100;
 }

@@ -7,4 +7,5 @@ public class BulletData : ScriptableObject
     public float speed = 10f;
     public int damage = 1;
     public Sprite bulletSprite;
+   
 }
