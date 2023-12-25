@@ -15,7 +15,7 @@ MonoBehaviour:
   enemyName: Basic Enemy
   description: This is just test and basic enemy. You can sign here enemys move speed
     and health amount.
-  speed: 3
+  speed: 5
   health: 3
   damage: 1
   scoreValue: 50

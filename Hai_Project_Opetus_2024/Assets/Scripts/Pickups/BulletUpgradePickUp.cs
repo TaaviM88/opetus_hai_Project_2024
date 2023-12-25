@@ -13,10 +13,11 @@ public class BulletUpgradePickUp : MonoBehaviour, IPickable
 
     public void PickUp()
     {
-        PlayerController player = FindObjectOfType<PlayerController>(); // Find the player in the scene
+        PlayerController player = playerTransform.gameObject.GetComponent<PlayerController>(); // Find the player in the scene
         if (player != null)
         {
             // Apply the upgrades
+            Debug.LogError("FIX WEAPON UPGRADE");
             player.bulletData.speed += speedBoost;
             player.fireRate += fireRateBoost;
             player.bulletData.damage += damageBoost;
