@@ -8,8 +8,10 @@ public class EnemySpawner : MonoBehaviour
     public EnemyData[] enemyTypes; // Array of different enemy types
     public float spawnRadius = 10f; // Distance from the player where enemies will spawn
     public float spawnInterval = 2f; // Time between each spawn
-
+    public int scoreThresholdForUpgrade = 1000;  // Score needed for each upgrade
+    private int nextUpgradeScore = 1000;
     private float nextSpawnTime;
+    private int upgradeLevel = 0;
 
     private void Start()
     {
@@ -20,10 +22,20 @@ public class EnemySpawner : MonoBehaviour
     {
         if (!GameManager.Instance.IsGameplay() || Time.time < nextSpawnTime) 
             return;
-        
+
+        CheckUpgrade();
             SpawnEnemy();
             nextSpawnTime = Time.time + spawnInterval;
         
+    }
+
+    private void CheckUpgrade()
+    {
+        if (UIManager.Instance.GetCurrentScore() >= nextUpgradeScore)
+        {
+            upgradeLevel++;
+            nextUpgradeScore += scoreThresholdForUpgrade;
+        }
     }
 
     void SpawnEnemy()
@@ -41,7 +53,7 @@ public class EnemySpawner : MonoBehaviour
         if (enemyScript != null)
         {
             enemyScript.enemyData = enemyTypes[Random.Range(0, enemyTypes.Length)];
-            enemyScript.SetHealth();
+            enemyScript.SetStats(upgradeLevel);
         }
     }
 }

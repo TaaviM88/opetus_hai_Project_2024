@@ -6,6 +6,7 @@ public class Bullet : MonoBehaviour
 {
     public BulletData bulletData;
     public bool useSprite = false;
+    public LayerMask ignoreLayer;
     private float lifespan = 5f; // How long the bullet should live in seconds
     private float lifeTimer; // The countdown timer
     private void Start()
@@ -42,8 +43,14 @@ public class Bullet : MonoBehaviour
 
     private void OnTriggerEnter2D(Collider2D collision)
     {
+        if (collision.gameObject.layer == ignoreLayer)
+        {
+            Debug.Log("ignoring player");
+            return;
+        }
+
         IDamageable damageable = collision.GetComponent<IDamageable>();
-        if (damageable != null)
+        if (damageable != null )
         {
             damageable.TakeDamage(bulletData.damage); // Assuming each bullet does 1 damage
             BulletPoolManager.Instance.ReturnBullet(gameObject); // Return the bullet to the pool

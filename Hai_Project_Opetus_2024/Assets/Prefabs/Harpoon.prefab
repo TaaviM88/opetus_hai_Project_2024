@@ -12,7 +12,7 @@ GameObject:
   - component: {fileID: 1604062697266403422}
   - component: {fileID: -8675427799549299203}
   - component: {fileID: 2587526599644263873}
-  m_Layer: 0
+  m_Layer: 6
   m_Name: Harpoon
   m_TagString: Untagged
   m_Icon: {fileID: 0}
@@ -101,6 +101,9 @@ MonoBehaviour:
   m_EditorClassIdentifier: 
   bulletData: {fileID: 0}
   useSprite: 0
+  ignoreLayer:
+    serializedVersion: 2
+    m_Bits: 64
 --- !u!61 &2587526599644263873
 BoxCollider2D:
   m_ObjectHideFlags: 0
@@ -156,7 +159,7 @@ GameObject:
   m_Component:
   - component: {fileID: 8434064040177643608}
   - component: {fileID: 6944367399941379294}
-  m_Layer: 0
+  m_Layer: 6
   m_Name: Triangle
   m_TagString: Untagged
   m_Icon: {fileID: 0}

@@ -1,20 +1,26 @@
+using System;
 using System.Collections;
 using System.Collections.Generic;
 using UnityEngine;
 
-public class ComboMultiplierPickable : MonoBehaviour, IPickable
+public class HealthPickup : MonoBehaviour, IPickable
 {
-    public int multiplierIncrease = 1; // The amount to increase the combo multiplier
+    public int healthRestoreAmount = 20;
     public float maxDistanceFromPlayer = 20f; // Maximum distance from the player
     private Transform playerTransform;
 
     public void PickUp()
     {
-        // Increase the player's combo multiplier
-        UIManager.Instance.IncreaseComboMultiplier(multiplierIncrease);
+        PlayerController player = FindObjectOfType<PlayerController>(); // Find the player in the scene
+        if (player != null)
+        {
+            player.RestoreHealth(healthRestoreAmount);
+            Debug.Log("Health Restored!");
+        }
 
-        // Destroy or deactivate the pickable object
-        Destroy(gameObject);
+        // Deactivate or destroy this pick-up
+         // Use this if you're pooling items
+         Destroy(gameObject); // Use this if you're not pooling
     }
 
     private void Start()

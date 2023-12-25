@@ -73,5 +73,6 @@ public class EnemyPoolManager : MonoBehaviour
         ScorePopUp displayScript = scoreDisplay.GetComponent<ScorePopUp>();
         displayScript.SetScore(damage);
     }
+
     
 }

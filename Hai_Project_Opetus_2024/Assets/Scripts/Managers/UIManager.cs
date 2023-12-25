@@ -8,9 +8,11 @@ public class UIManager : MonoBehaviour
 {
     public static UIManager Instance;
 
-    public TextMeshProUGUI scoreText; // Assign in the inspector
+    public TMP_Text scoreText; // Assign in the inspector
     public float comboDuration = 2f; // Time in seconds to get the next hit to continue the combo
     public Slider slider;
+    public Slider playerHealthSlider;
+    public TMP_Text playerHealthTxt;
     private int totalScore = 0;
 
     private int comboMultiplier = 1;
@@ -47,8 +49,12 @@ public class UIManager : MonoBehaviour
 
     private void Update()
     {
-        // Decrease the combo timer
-        if (comboTimer > 0)
+        if (!GameManager.Instance.IsGameplay())
+        {
+            return;
+        }
+            // Decrease the combo timer
+            if (comboTimer > 0)
         {
             comboTimer -= Time.deltaTime;
             slider.value = comboTimer;
@@ -65,6 +71,13 @@ public class UIManager : MonoBehaviour
         scoreText.text = "Score: " + totalScore + " x" + comboMultiplier;
     }
 
+    public void UpdatePlayerHealth(int currentHealth, int maxHealth)
+    {
+        playerHealthSlider.maxValue = maxHealth;
+        playerHealthSlider.value = currentHealth;
+        playerHealthTxt.text = $"{currentHealth} / {maxHealth}";
+    }
+
     public void IncreaseComboMultiplier(int amount)
     {
         comboMultiplier += amount;
@@ -74,5 +87,10 @@ public class UIManager : MonoBehaviour
     public int GetCurrentComboMultiplier()
     {
         return comboMultiplier;
+    }
+
+    public int GetCurrentScore()
+    {
+        return totalScore;
     }
 }

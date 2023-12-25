@@ -3,5 +3,6 @@ public enum GameState
     Gameplay,
     Pause,
     Cutscene,
-    Transition
+    Transition,
+    GameOver
 }

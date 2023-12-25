@@ -1,9 +1,8 @@
 using System;
 using System.Collections;
-using System.Collections.Generic;
 using UnityEngine;
 using UnityEngine.InputSystem;
-public class PlayerController : MonoBehaviour
+public class PlayerController : MonoBehaviour, IDamageable
 {
     [Header("Movement properties")]
     public float moveSpeed = 5f;
@@ -14,7 +13,19 @@ public class PlayerController : MonoBehaviour
     public float fireRate = 0.5f; // Bullets per second
     private float nextFireTime = 0f; // When the player is allowed to fire again
 
-    
+    public int maxHealth = 100;
+    public int currentHealth;
+    public float invincibilityDuration = 2f; // Duration of iFrames after taking damage
+    private bool isInvincible = false;
+    private float invincibilityTimer;
+
+    public GameObject scoreDisplayPrefab;
+    public GameObject deathEffect;
+    //Damage indicator
+    public float flashDuration = 1f; // Total time to keep flashing
+    public float flashDelay = 0.1f; // Time between each flash
+    private SpriteRenderer spriteRenderer; // Assign this in the inspector
+
     private Master controls;
 
     private Vector2 move;
@@ -23,17 +34,19 @@ public class PlayerController : MonoBehaviour
 
     private bool isUsingControllerOrKeyboard = false;
     private bool isUsingMouse = false;
-
+    private Vector2 lastRBForce = Vector2.zero;
     private void Awake()
     {
         controls = new Master();
         rb = GetComponent<Rigidbody2D>();
+        spriteRenderer = GetComponent<SpriteRenderer>();
     }
 
     // Start is called before the first frame update
     void Start()
     {
-        
+        currentHealth = maxHealth;
+        UIManager.Instance.UpdatePlayerHealth(currentHealth, maxHealth);
     }
 
     private void OnEnable()
@@ -49,7 +62,11 @@ public class PlayerController : MonoBehaviour
     private void Update()
     {
         TogglePause();
-        if (!GameManager.Instance.IsGameplay()) return;
+        
+        if(CheckGameState() == false)
+        {
+            return;
+        }
 
         // Check for controller or keyboard input
         if (controls.Gameplay.Move.ReadValue<Vector2>().sqrMagnitude > 0.1)
@@ -75,25 +92,54 @@ public class PlayerController : MonoBehaviour
         }
 
         Shoot();
+
+        if (isInvincible)
+        {
+            invincibilityTimer -= Time.deltaTime;
+            if (invincibilityTimer <= 0)
+            {
+                isInvincible = false;
+            }
+        }
+    }
+
+    bool CheckGameState()
+    {
+        if (!GameManager.Instance.IsGameplay())
+        {   
+            lastRBForce = rb.totalForce;
+            rb.isKinematic = true;
+            return false;
+        }
+        else
+        {
+            if (lastRBForce != Vector2.zero)
+            {
+                rb.totalForce = lastRBForce;
+                lastRBForce = Vector2.zero;
+            }
+                rb.isKinematic = false;
+            return true;
+        }
     }
 
     private void Shoot()
     {
-        //controls.Gameplay.Shoot.ReadValue<float>() > 0.1f jos haluaa että voi ampua nappipohjassa
-        if (controls.Gameplay.Shoot.triggered && Time.time >= nextFireTime)
-        {
-            nextFireTime = Time.time + fireRate;
+    //controls.Gameplay.Shoot.ReadValue<float>() > 0.1f jos haluaa että voi ampua nappipohjassa
+    if (controls.Gameplay.Shoot.triggered && Time.time >= nextFireTime)
+    {
+        nextFireTime = Time.time + fireRate;
 
-            GameObject bullet = BulletPoolManager.Instance.GetBullet();
-            bullet.transform.position = gunTransform.position;
-            bullet.transform.rotation = gunTransform.rotation;
+        GameObject bullet = BulletPoolManager.Instance.GetBullet();
+        bullet.transform.position = gunTransform.position;
+        bullet.transform.rotation = gunTransform.rotation;
 
-            // Set the bullet's data and other properties as needed
-            Bullet bulletComponent = bullet.GetComponent<Bullet>();
-            bulletComponent.bulletData = bulletData;
+        // Set the bullet's data and other properties as needed
+        Bullet bulletComponent = bullet.GetComponent<Bullet>();
+        bulletComponent.bulletData = bulletData;
 
-            Debug.Log("Fire!");
-        }
+        Debug.Log("Fire!");
+    }
     }
     private void TogglePause()
     {
@@ -162,6 +208,7 @@ public class PlayerController : MonoBehaviour
         move = controls.Gameplay.Move.ReadValue<Vector2>();
         Vector2 movement = new Vector2(move.x, move.y) * moveSpeed * Time.fixedDeltaTime;
         rb.MovePosition(rb.position + movement);
+        //rb.totalForce = Vector2.zero;
     }
     private void OnTriggerEnter2D(Collider2D collision)
     {
@@ -170,5 +217,75 @@ public class PlayerController : MonoBehaviour
         {
             pickable.PickUp();
         }
+    }
+
+    public void TakeDamage(int damage)
+    {
+        if (isInvincible) return; // No damage taken if invincible
+
+        currentHealth -= damage;
+        currentHealth = Mathf.Max(currentHealth, 0); // Prevent health from going below 0
+        UIManager.Instance.UpdatePlayerHealth(currentHealth, maxHealth);
+        if (currentHealth <= 0)
+        {
+            Die(); // Handle player death
+        }
+        else
+        {
+            // Activate invincibility frames
+            SpawnDamageNumber(damage);
+            isInvincible = true;
+            invincibilityTimer = invincibilityDuration;
+            StartCoroutine(FlashEffect());
+        }
+
+    }
+
+    private IEnumerator FlashEffect()
+    {
+        // Calculate how many times to flash based on the duration and delay
+        int flashTimes = Mathf.FloorToInt(flashDuration / flashDelay);
+
+        // Toggle the sprite renderer on and off
+        for (int i = 0; i < flashTimes; i++)
+        {
+            spriteRenderer.enabled = !spriteRenderer.enabled;
+            yield return new WaitForSeconds(flashDelay);
+        }
+
+        // Ensure the sprite renderer is enabled after flashing
+        spriteRenderer.enabled = true;
+    }
+
+    public void Die()
+    {
+        GameManager.Instance.ChangeState(GameState.GameOver);
+        SpawnDeathEffect();
+        gameObject.SetActive(false);
+    }
+
+    private void SpawnDeathEffect()
+    {
+       Instantiate(deathEffect, transform.position, Quaternion.identity);
+    }
+
+    public void RestoreHealth(int amount)
+    {
+        currentHealth += amount;
+        currentHealth = Mathf.Min(currentHealth, maxHealth); // Cap health at maxHealth
+        UIManager.Instance.UpdatePlayerHealth(currentHealth, maxHealth);
+    }
+
+    public void IncreaseMaxHealth(int amount)
+    {
+        maxHealth += amount;
+        RestoreHealth(amount); // Optionally restore health by the increased amount
+    }
+
+    public void SpawnDamageNumber(int damage)
+    {
+        GameObject scoreDisplay = Instantiate(scoreDisplayPrefab, transform.position, Quaternion.identity);
+        ScorePopUp displayScript = scoreDisplay.GetComponent<ScorePopUp>();
+        displayScript.SetScore(damage);
     }
 }

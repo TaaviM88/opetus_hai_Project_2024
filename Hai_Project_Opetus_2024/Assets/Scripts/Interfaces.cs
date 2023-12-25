@@ -7,4 +7,5 @@ public interface IDamageable
 public interface IPickable
 {
     void PickUp();
+    
 }

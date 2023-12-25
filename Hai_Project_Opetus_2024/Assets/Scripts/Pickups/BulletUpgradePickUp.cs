@@ -2,19 +2,31 @@ using System.Collections;
 using System.Collections.Generic;
 using UnityEngine;
 
-public class ComboMultiplierPickable : MonoBehaviour, IPickable
+public class BulletUpgradePickUp : MonoBehaviour, IPickable
 {
-    public int multiplierIncrease = 1; // The amount to increase the combo multiplier
+    public float speedBoost = 2f; // How much to increase bullet speed
+    public float fireRateBoost = 0.1f; // How much to increase the fire rate
+    public int damageBoost = 1; // How much to increase the damage
+    
     public float maxDistanceFromPlayer = 20f; // Maximum distance from the player
     private Transform playerTransform;
 
     public void PickUp()
     {
-        // Increase the player's combo multiplier
-        UIManager.Instance.IncreaseComboMultiplier(multiplierIncrease);
+        PlayerController player = FindObjectOfType<PlayerController>(); // Find the player in the scene
+        if (player != null)
+        {
+            // Apply the upgrades
+            player.bulletData.speed += speedBoost;
+            player.fireRate += fireRateBoost;
+            player.bulletData.damage += damageBoost;
 
-        // Destroy or deactivate the pickable object
-        Destroy(gameObject);
+            Debug.Log("Weapon Upgraded!");
+        }
+
+        // Deactivate or destroy this power-up
+        gameObject.SetActive(false); // Use this if you're pooling items
+        // Destroy(gameObject); // Use this if you're not pooling
     }
 
     private void Start()
@@ -42,3 +54,4 @@ public class ComboMultiplierPickable : MonoBehaviour, IPickable
         }
     }
 }
+
