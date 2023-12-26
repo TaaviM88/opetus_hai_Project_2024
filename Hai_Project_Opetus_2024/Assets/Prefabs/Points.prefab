@@ -218,4 +218,6 @@ MonoBehaviour:
   m_EditorClassIdentifier: 
   lifetime: 1
   moveSpeed: 1
-  textMesh: {fileID: 7275287477102366473}
+  tmpText: {fileID: 7275287477102366473}
+  scoreColor: {r: 0.85383695, g: 0.9622642, b: 0, a: 1}
+  damageColor: {r: 1, g: 0, b: 0, a: 1}

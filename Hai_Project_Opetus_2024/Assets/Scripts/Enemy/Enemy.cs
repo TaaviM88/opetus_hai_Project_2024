@@ -5,7 +5,7 @@ using TMPro;
 public class Enemy : MonoBehaviour, IDamageable
 {
     public EnemyData enemyData { get; set; } // Assign this in the inspector or when spawning the enemy
-    public TMP_Text tmpText;
+   // public TMP_Text tmpText;
     public float shakeDuration = 1f;
     public float attackRange = 10f;
     private ShakeBehavior shake;
@@ -47,11 +47,18 @@ public class Enemy : MonoBehaviour, IDamageable
 
     private void Update()
     {
-        tmpText.text = currentHealth.ToString();
-       
+        //tmpText.text = currentHealth.ToString();
+     
+        if(playerTransform == null)
+        {
+            //just for if enemy get created too early
+            playerTransform = GameObject.FindGameObjectWithTag("Player").transform; // Find the player
+        }
+        
         //add shake when doing attack
         if(CheckGameState() == false || shake.enabled)
         {
+
             return;
         }
 
@@ -71,14 +78,31 @@ public class Enemy : MonoBehaviour, IDamageable
             Vector2 direction = (playerTransform.position - transform.position).normalized;
             rb.MovePosition(rb.position + direction * currentSpeed * Time.deltaTime);
         }
+        UpdateSpriteDirection();
     }
-    
+
+    private void UpdateSpriteDirection()
+    {
+
+        if (playerTransform != null)
+        {
+            // Determine if the player is to the left or right of the enemy
+            bool playerIsToLeft = playerTransform.position.x < transform.position.x;
+
+            // If the enemy is moving to the right but the player is to the left, or vice versa, flip the sprite
+            spriteRenderer.flipX = playerIsToLeft;
+
+            // If your sprite faces left by default and you want it to face the player, you might need to use !playerIsToLeft instead
+        }
+    }
+
     bool CheckGameState()
     {
         if (!GameManager.Instance.IsGameplay())
         {
             lastRBForce = rb.totalForce;
             rb.isKinematic = true;
+            rb.totalForce = Vector2.zero;
             return false;
         }
         else

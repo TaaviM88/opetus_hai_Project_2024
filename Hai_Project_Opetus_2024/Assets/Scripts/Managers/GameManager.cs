@@ -4,12 +4,13 @@ using System.Collections.Generic;
 using UnityEngine;
 using UnityEngine.UI;
 using UnityEngine.InputSystem;
+using UnityEngine.SceneManagement;
 public class GameManager : MonoBehaviour
 {
     public static GameManager Instance;
 
     public GameState currentState;
-
+    public float cooldownTime = 2f;
     private void Awake()
     {
         // Ensure there's only one GameManager instance (Singleton pattern)
@@ -29,8 +30,6 @@ public class GameManager : MonoBehaviour
     private void Update()
     {
       
-        
-
         switch (currentState)
         {
             case GameState.Gameplay:
@@ -83,5 +82,21 @@ public class GameManager : MonoBehaviour
     {
         return currentState == GameState.Gameplay;
     }
+    public void PlayerDied()
+    {
+        StartCoroutine(DeathSequence());
+    }
 
+    private IEnumerator DeathSequence()
+    {
+        // Wait for the cooldown
+        yield return new WaitForSeconds(cooldownTime);
+        UIManager.Instance.ActivateGameOverScreen();
+    }
+    public void RestartGame()
+    {
+        // Reload the current scene
+        SceneManager.LoadScene(SceneManager.GetActiveScene().buildIndex);
+        ChangeState(GameState.Gameplay);
+    }
 }

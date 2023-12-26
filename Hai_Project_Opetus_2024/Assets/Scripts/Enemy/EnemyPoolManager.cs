@@ -63,7 +63,7 @@ public class EnemyPoolManager : MonoBehaviour
         if (displayScript != null)
         {
             int totalScore = score * UIManager.Instance.GetCurrentComboMultiplier();
-            displayScript.SetScore(totalScore); // Set this to the score value from the enemy data
+            displayScript.SetScore(totalScore, true); // Set this to the score value from the enemy data
         }
     }
 
@@ -71,7 +71,7 @@ public class EnemyPoolManager : MonoBehaviour
     {
         GameObject scoreDisplay = Instantiate(scoreDisplayPrefab, position, Quaternion.identity);
         ScorePopUp displayScript = scoreDisplay.GetComponent<ScorePopUp>();
-        displayScript.SetScore(damage);
+        displayScript.SetScore(damage, false);
     }
 
     

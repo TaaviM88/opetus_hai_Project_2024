@@ -2,16 +2,28 @@ using System.Collections;
 using System.Collections.Generic;
 using UnityEngine;
 using TMPro;
+using System.Xml;
 public class ScorePopUp : MonoBehaviour
 {
     public float lifetime = 2f; // How long the score stays on screen
     public float moveSpeed = 1f; // How fast it moves up
 
-    public TextMeshPro textMesh; // Change to Text if using standard UI Text
+    public TMP_Text tmpText; // Change to Text if using standard UI Text
+    public Color scoreColor;
+    public Color damageColor;
     private float timer;
-    public void SetScore(int score)
+    public void SetScore(int score, bool isScore)
     {
-        textMesh.text = score.ToString();
+        if(isScore)
+        {
+            tmpText.color = scoreColor;
+        }
+        else
+        {
+            tmpText.color = damageColor;
+        }
+
+        tmpText.text = score.ToString();
     }
 
 
@@ -25,9 +37,9 @@ public class ScorePopUp : MonoBehaviour
         timer += Time.deltaTime;
         float alpha = Mathf.Lerp(1f, 0f, timer / lifetime);
 
-        Color color = textMesh.color;
+        Color color = tmpText.color;
         color.a = alpha;
-        textMesh.color = color;
+        tmpText.color = color;
 
         // Destroy the object after its lifetime expires
         if (timer >= lifetime)

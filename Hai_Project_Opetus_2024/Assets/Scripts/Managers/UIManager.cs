@@ -2,6 +2,7 @@ using System;
 using System.Collections;
 using System.Collections.Generic;
 using TMPro;
+using UnityEditor.Rendering.LookDev;
 using UnityEngine;
 using UnityEngine.UI;
 public class UIManager : MonoBehaviour
@@ -13,6 +14,9 @@ public class UIManager : MonoBehaviour
     public Slider slider;
     public Slider playerHealthSlider;
     public TMP_Text playerHealthTxt;
+    public Slider playerBulletLVLSlider;
+    public TMP_Text playerBulletTxt;
+    public GameObject gameOverScreen;
     private int totalScore = 0;
 
     private int comboMultiplier = 1;
@@ -84,6 +88,14 @@ public class UIManager : MonoBehaviour
         comboTimer = comboDuration;
         UpdateScoreDisplay();
     }
+
+    public void UpdateBulletLevel(int bulletLvl, int maxLvl)
+    {
+        playerBulletLVLSlider.maxValue = maxLvl;
+        playerBulletLVLSlider.value = bulletLvl;
+        playerBulletTxt.text = $"WPN:{bulletLvl}";
+    }
+
     public int GetCurrentComboMultiplier()
     {
         return comboMultiplier;
@@ -92,5 +104,26 @@ public class UIManager : MonoBehaviour
     public int GetCurrentScore()
     {
         return totalScore;
+    }
+
+    public void ActivateGameOverScreen()
+    {
+        gameOverScreen.SetActive(true);
+        StartCoroutine(FadeToBlack());
+    }
+
+    private IEnumerator FadeToBlack()
+    {
+        float fadeDuration = 1f; // Duration of the fade
+        float currentTime = 0f;
+        Image goImage = gameOverScreen.GetComponent<Image>();
+
+        while (currentTime < fadeDuration)
+        {
+            currentTime += Time.deltaTime;
+            float alpha = Mathf.Lerp(0, 1, currentTime / fadeDuration);
+            goImage.color = new Color(0, 0, 0, alpha);
+            yield return null;
+        }
     }
 }

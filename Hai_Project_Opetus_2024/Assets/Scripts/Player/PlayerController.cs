@@ -55,6 +55,8 @@ public class PlayerController : MonoBehaviour, IDamageable
     {
         currentHealth = maxHealth;
         UIManager.Instance.UpdatePlayerHealth(currentHealth, maxHealth);
+        UIManager.Instance.UpdateBulletLevel(bulletUpgradeLevel, bulletData.upgrades.Count - 1);
+        
     }
 
     private void OnEnable()
@@ -296,6 +298,7 @@ public class PlayerController : MonoBehaviour, IDamageable
         GameManager.Instance.ChangeState(GameState.GameOver);
         SpawnDeathEffect();
         gameObject.SetActive(false);
+        GameManager.Instance.PlayerDied();
     }
 
     private void SpawnDeathEffect()
@@ -320,11 +323,12 @@ public class PlayerController : MonoBehaviour, IDamageable
     {
         GameObject scoreDisplay = Instantiate(scoreDisplayPrefab, transform.position, Quaternion.identity);
         ScorePopUp displayScript = scoreDisplay.GetComponent<ScorePopUp>();
-        displayScript.SetScore(damage);
+        displayScript.SetScore(damage, false);
     }
 
     public void IncreaseBulletLevel()
     {
         bulletUpgradeLevel++;
+        UIManager.Instance.UpdateBulletLevel(bulletUpgradeLevel, bulletData.upgrades.Count - 1);
     }
 }
