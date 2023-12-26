@@ -1,5 +1,6 @@
 using System;
 using System.Collections;
+using TMPro;
 using UnityEngine;
 using UnityEngine.InputSystem;
 public class PlayerController : MonoBehaviour, IDamageable
@@ -7,6 +8,9 @@ public class PlayerController : MonoBehaviour, IDamageable
     [Header("Movement properties")]
     public float moveSpeed = 5f;
 
+    public Sprite sideSprite;
+    public Sprite topSprite;
+    private Sprite currentSprite;
     [Header("Weapon properties")]
     public Transform gunTransform;
     public BulletData bulletData;
@@ -206,6 +210,30 @@ public class PlayerController : MonoBehaviour, IDamageable
         if (!GameManager.Instance.IsGameplay()) return;
 
         Move();
+        UpdateSpriteDirection();
+    }
+
+    private void UpdateSpriteDirection()
+    {
+        if (move.magnitude > 0.1f) // Check if the player is moving
+        {
+            if (Mathf.Abs(move.x) > Mathf.Abs(move.y)) // Moving more horizontally
+            {
+                spriteRenderer.sprite = sideSprite;
+                spriteRenderer.flipX = move.x < 0; // Flip if moving left
+                spriteRenderer.flipY = false; // Ensure flipY is reset when moving horizontally
+            }
+            else // Moving more vertically
+            {
+                spriteRenderer.sprite = topSprite;
+                spriteRenderer.flipY = move.y < 0; // Flip if moving down
+                                                   // Ensure flipX is correctly set when moving vertically (if needed)
+                if (move.y > 0) // Moving up
+                {
+                    spriteRenderer.flipX = false; // or true, depending on your sprite orientation
+                }
+            }
+        }
     }
 
     private void Move()
