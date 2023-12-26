@@ -3,17 +3,17 @@ using System.Collections;
 using System.Collections.Generic;
 using UnityEngine;
 
-public class HealthPickup : PickUp, IPickable
+public class HealthPickup : PickUp
 {
     public int healthRestoreAmount = 20;
-    
-    public void PickUp()
+
+    public override void OnPickUp()
     {
-        PlayerController player = FindObjectOfType<PlayerController>(); // Find the player in the scene
+        PlayerController player = playerTransform.gameObject.GetComponent<PlayerController>();
         if (player != null)
         {
             player.RestoreHealth(healthRestoreAmount);
-            Debug.Log("Health Restored!");
+
         }
 
         // Deactivate or destroy this pick-up

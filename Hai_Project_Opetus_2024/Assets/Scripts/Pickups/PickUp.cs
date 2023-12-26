@@ -1,8 +1,7 @@
 using System.Collections;
 using System.Collections.Generic;
 using UnityEngine;
-
-public class PickUp : MonoBehaviour
+public abstract class PickUp : MonoBehaviour
 {
     public float maxDistanceFromPlayer = 20f; // Maximum distance from the player
     protected Transform playerTransform;
@@ -30,6 +29,11 @@ public class PickUp : MonoBehaviour
             Debug.Log("Destroy");
             Destroy(gameObject); // Destroy the object if it's too far from the player
         }
+    }
+
+    public virtual void OnPickUp()
+    {
+
     }
     
 }

@@ -14,4 +14,23 @@ MonoBehaviour:
   m_EditorClassIdentifier: 
   speed: 10
   damage: 1
+  upgrades:
+  - additionalSpeed: 0
+    additionalFireRate: 0
+    additionalDamage: 0
+  - additionalSpeed: 1
+    additionalFireRate: -0.1
+    additionalDamage: 1
+  - additionalSpeed: 2
+    additionalFireRate: -0.2
+    additionalDamage: 2
+  - additionalSpeed: 3
+    additionalFireRate: -0.3
+    additionalDamage: 3
+  - additionalSpeed: 4
+    additionalFireRate: -0.4
+    additionalDamage: 4
+  - additionalSpeed: 6
+    additionalFireRate: -0.5
+    additionalDamage: 6
   bulletSprite: {fileID: 0}

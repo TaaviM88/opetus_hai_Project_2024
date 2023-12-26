@@ -34,7 +34,11 @@ public class PlayerController : MonoBehaviour, IDamageable
 
     private bool isUsingControllerOrKeyboard = false;
     private bool isUsingMouse = false;
+    
     private Vector2 lastRBForce = Vector2.zero;
+
+    private int bulletUpgradeLevel = 0;
+
     private void Awake()
     {
         controls = new Master();
@@ -125,22 +129,23 @@ public class PlayerController : MonoBehaviour, IDamageable
 
     private void Shoot()
     {
-    //controls.Gameplay.Shoot.ReadValue<float>() > 0.1f jos haluaa että voi ampua nappipohjassa
-    if (controls.Gameplay.Shoot.triggered && Time.time >= nextFireTime)
-    {
-        nextFireTime = Time.time + fireRate;
+        //controls.Gameplay.Shoot.ReadValue<float>() > 0.1f jos haluaa että voi ampua nappipohjassa
+        if (controls.Gameplay.Shoot.triggered && Time.time >= nextFireTime)
+        {
+            nextFireTime = Time.time + fireRate;
 
-        GameObject bullet = BulletPoolManager.Instance.GetBullet();
-        bullet.transform.position = gunTransform.position;
-        bullet.transform.rotation = gunTransform.rotation;
+            GameObject bullet = BulletPoolManager.Instance.GetBullet();
+            bullet.transform.position = gunTransform.position;
+            bullet.transform.rotation = gunTransform.rotation;
 
-        // Set the bullet's data and other properties as needed
-        Bullet bulletComponent = bullet.GetComponent<Bullet>();
-        bulletComponent.bulletData = bulletData;
+            // Set the bullet's data and other properties as needed
+            Bullet bulletComponent = bullet.GetComponent<Bullet>();
+            bulletComponent.bulletData = bulletData;
+            bulletComponent.upgradeLevel = bulletUpgradeLevel;
 
-        Debug.Log("Fire!");
+        }
     }
-    }
+
     private void TogglePause()
     {
 
@@ -212,10 +217,11 @@ public class PlayerController : MonoBehaviour, IDamageable
     }
     private void OnTriggerEnter2D(Collider2D collision)
     {
-        IPickable pickable = collision.GetComponent<IPickable>();
-        if (pickable != null)
+        PickUp pickUp = collision.GetComponent<PickUp>();
+        if (pickUp != null)
         {
-            pickable.PickUp();
+            pickUp.OnPickUp();
+            Destroy(pickUp.gameObject); // Or deactivate if using pooling
         }
     }
 
@@ -287,5 +293,10 @@ public class PlayerController : MonoBehaviour, IDamageable
         GameObject scoreDisplay = Instantiate(scoreDisplayPrefab, transform.position, Quaternion.identity);
         ScorePopUp displayScript = scoreDisplay.GetComponent<ScorePopUp>();
         displayScript.SetScore(damage);
+    }
+
+    public void IncreaseBulletLevel()
+    {
+        bulletUpgradeLevel++;
     }
 }
