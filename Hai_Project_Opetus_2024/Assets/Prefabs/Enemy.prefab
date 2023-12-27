@@ -105,7 +105,7 @@ MonoBehaviour:
   attackRange: 5
   attackCooldown: 2
   dashSpeed: 20
-  dashDuration: 0.5
+  dashDuration: 1
 --- !u!61 &284287957292591406
 BoxCollider2D:
   m_ObjectHideFlags: 0

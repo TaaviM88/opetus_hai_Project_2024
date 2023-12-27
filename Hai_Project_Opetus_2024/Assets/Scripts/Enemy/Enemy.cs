@@ -81,13 +81,14 @@ public class Enemy : MonoBehaviour, IDamageable
             Vector2 direction = (playerTransform.position - transform.position).normalized;
             rb.MovePosition(rb.position + direction * currentSpeed * Time.deltaTime);
         }
+
         UpdateSpriteDirection();
     }
 
     private void UpdateSpriteDirection()
     {
 
-        if (playerTransform != null)
+        if (playerTransform != null || !isDashing)
         {
 
             Vector2 direction = playerTransform.position - transform.position;
