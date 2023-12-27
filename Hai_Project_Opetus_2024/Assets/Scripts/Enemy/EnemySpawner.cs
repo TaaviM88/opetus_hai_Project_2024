@@ -15,18 +15,31 @@ public class EnemySpawner : MonoBehaviour
 
     private void Start()
     {
-        playerTransform = GameObject.FindGameObjectWithTag("Player").transform; // Find the player
+        //playerTransform = GameObject.FindGameObjectWithTag("Player").transform; // Find the player
     }
 
     private void Update()
     {
+        
+
         if (!GameManager.Instance.IsGameplay() || Time.time < nextSpawnTime) 
             return;
+
+        if (playerTransform == null)
+        {
+            GetPlayer();
+            return;
+        }
 
         CheckUpgrade();
             SpawnEnemy();
             nextSpawnTime = Time.time + spawnInterval;
         
+    }
+
+    private void GetPlayer()
+    {
+       playerTransform = GameManager.Instance.getPlayer.gameObject.transform;
     }
 
     private void CheckUpgrade()

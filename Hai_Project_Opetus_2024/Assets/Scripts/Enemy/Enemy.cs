@@ -42,23 +42,30 @@ public class Enemy : MonoBehaviour, IDamageable
 
     private void Start()
     {
-        playerTransform = GameObject.FindGameObjectWithTag("Player").transform; // Find the player
+        
+    }
+
+    private void FindPlayer()
+    {
+        if (GameManager.Instance.IsGameplay() && playerTransform == null)
+        {
+            playerTransform = GameManager.Instance.getPlayer.transform;
+        }
     }
 
     private void Update()
     {
         //tmpText.text = currentHealth.ToString();
-     
-        if(playerTransform == null)
-        {
-            //just for if enemy get created too early
-            playerTransform = GameObject.FindGameObjectWithTag("Player").transform; // Find the player
-        }
-        
+
         //add shake when doing attack
         if(CheckGameState() == false || shake.enabled)
         {
 
+            return;
+        }
+        if(playerTransform == null)
+        {
+            FindPlayer();
             return;
         }
 

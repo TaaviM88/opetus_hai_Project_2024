@@ -7,11 +7,15 @@ public abstract class PickUp : MonoBehaviour
     protected Transform playerTransform;
     protected virtual void Start()
     {
-        playerTransform = GameObject.FindGameObjectWithTag("Player").transform; // Find the player
+        if(GameManager.Instance.IsGameplay())
+        {
+            playerTransform = GameManager.Instance.getPlayer.transform;
+        }
     }
 
     protected virtual void Update()
     {
+
         CheckDistanceAndDestroy();
     }
 

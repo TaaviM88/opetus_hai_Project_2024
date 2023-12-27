@@ -11,6 +11,8 @@ public class GameManager : MonoBehaviour
 
     public GameState currentState;
     public float cooldownTime = 2f;
+
+    public PlayerController getPlayer { get; set; }
     private void Awake()
     {
         // Ensure there's only one GameManager instance (Singleton pattern)
@@ -47,6 +49,11 @@ public class GameManager : MonoBehaviour
         }
     }
 
+    public void StartGame(PlayerController player)
+    {
+        getPlayer = player;
+        ChangeState(GameState.Gameplay);
+    }
 
 
     // Method to change the game state

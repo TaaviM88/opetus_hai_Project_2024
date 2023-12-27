@@ -1,8 +1,8 @@
 using System;
 using System.Collections;
-using TMPro;
 using UnityEngine;
 using UnityEngine.InputSystem;
+
 public class PlayerController : MonoBehaviour, IDamageable
 {
     [Header("Movement properties")]
@@ -16,6 +16,7 @@ public class PlayerController : MonoBehaviour, IDamageable
     public BulletData bulletData;
     public float fireRate = 0.5f; // Bullets per second
     private float nextFireTime = 0f; // When the player is allowed to fire again
+    public bool autoFire = false;
 
     public int maxHealth = 100;
     public int currentHealth;
@@ -56,7 +57,7 @@ public class PlayerController : MonoBehaviour, IDamageable
         currentHealth = maxHealth;
         UIManager.Instance.UpdatePlayerHealth(currentHealth, maxHealth);
         UIManager.Instance.UpdateBulletLevel(bulletUpgradeLevel, bulletData.upgrades.Count - 1);
-        
+        GameManager.Instance.StartGame(this);
     }
 
     private void OnEnable()
@@ -136,7 +137,7 @@ public class PlayerController : MonoBehaviour, IDamageable
     private void Shoot()
     {
         //controls.Gameplay.Shoot.ReadValue<float>() > 0.1f jos haluaa että voi ampua nappipohjassa
-        if (controls.Gameplay.Shoot.triggered && Time.time >= nextFireTime)
+        if ((controls.Gameplay.Shoot.triggered || autoFire) && Time.time >= nextFireTime)
         {
             nextFireTime = Time.time + fireRate;
 
@@ -150,6 +151,7 @@ public class PlayerController : MonoBehaviour, IDamageable
             bulletComponent.upgradeLevel = bulletUpgradeLevel;
 
         }
+
     }
 
     private void TogglePause()
@@ -330,5 +332,7 @@ public class PlayerController : MonoBehaviour, IDamageable
     {
         bulletUpgradeLevel++;
         UIManager.Instance.UpdateBulletLevel(bulletUpgradeLevel, bulletData.upgrades.Count - 1);
+        autoFire = bulletData.GetBullet(bulletUpgradeLevel).autoFire;
+
     }
 }

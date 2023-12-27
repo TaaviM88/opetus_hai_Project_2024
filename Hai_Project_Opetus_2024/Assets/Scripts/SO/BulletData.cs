@@ -7,6 +7,7 @@ public class BulletUpgradeLevel
 {
     public float additionalSpeed = 0;
     public int additionalDamage = 0;
+    public bool enableAutoFire = false;
 }
 
 [System.Serializable]
@@ -14,6 +15,7 @@ public class UpgradedBullet
 {
     public float currenSpeed = 0;
     public int currentDamage = 0;
+    public bool autoFire;
 }
 
 
@@ -36,7 +38,7 @@ public class BulletData : ScriptableObject
  
         bullet.currenSpeed = speed + upgrades[upgradeLevel].additionalSpeed;
         bullet.currentDamage = damage + upgrades[upgradeLevel].additionalDamage;
-
+        bullet.autoFire = upgrades[upgradeLevel].enableAutoFire;
         return bullet;
     }
 }

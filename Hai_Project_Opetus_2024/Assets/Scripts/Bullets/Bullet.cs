@@ -6,7 +6,7 @@ public class Bullet : MonoBehaviour
 {
     public BulletData bulletData;
     public bool useSprite = false;
-    public LayerMask ignoreLayer;
+
     public int upgradeLevel { get; set;}
     private float lifespan = 5f; // How long the bullet should live in seconds
     private float lifeTimer; // The countdown timer
