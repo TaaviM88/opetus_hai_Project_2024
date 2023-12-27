@@ -194,7 +194,7 @@ MonoBehaviour:
   - {fileID: 11400000, guid: 1df49c7612108c948aa582674b229b85, type: 2}
   spawnRadius: 20
   spawnInterval: 1
-  scoreThresholdForUpgrade: 1000
+  scoreThresholdForUpgrade: 4000
 --- !u!4 &146129653
 Transform:
   m_ObjectHideFlags: 0
@@ -2719,7 +2719,7 @@ MonoBehaviour:
   enemyPrefab: {fileID: 8292230684477051202, guid: 5ea84cef0b94ac3418fb4ff1f2f40e42, type: 3}
   scoreDisplayPrefab: {fileID: 8366916945545279545, guid: 5e4aa02258d862849b191fe6c1396283, type: 3}
   dieEffect: {fileID: 6739733582542089155, guid: cb68bb914f4903249ae08791c8a013b1, type: 3}
-  poolSize: 10
+  poolSize: 100
 --- !u!4 &1359745639
 Transform:
   m_ObjectHideFlags: 0
@@ -3575,7 +3575,7 @@ MonoBehaviour:
   m_Name: 
   m_EditorClassIdentifier: 
   bulletPrefab: {fileID: 2542279129006655512, guid: e3f4afc123d0113449ac4970beb57d0e, type: 3}
-  poolSize: 20
+  poolSize: 360
 --- !u!4 &2099000121
 Transform:
   m_ObjectHideFlags: 0
@@ -3628,8 +3628,9 @@ MonoBehaviour:
   topSprite: {fileID: 21300000, guid: b459997f34baf0c479eee2b03b735e9b, type: 3}
   gunTransform: {fileID: 268780071}
   bulletData: {fileID: 11400000, guid: 3005b891f5e8c5e4fb8ff8389e218ec0, type: 2}
-  fireRate: 0.1
+  fireRate: 0.25
   autoFire: 0
+  multiShotEnabled: 0
   maxHealth: 100
   currentHealth: 0
   invincibilityDuration: 0.5

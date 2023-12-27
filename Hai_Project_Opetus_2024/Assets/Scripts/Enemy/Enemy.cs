@@ -35,17 +35,7 @@ public class Enemy : MonoBehaviour, IDamageable
 
     }
 
-    private void OnEnable()
-    {
-        
-    }
-
-    private void Start()
-    {
-        
-    }
-
-    private void FindPlayer()
+    private void GetPlayer()
     {
         if (GameManager.Instance.IsGameplay() && playerTransform == null)
         {
@@ -63,9 +53,10 @@ public class Enemy : MonoBehaviour, IDamageable
 
             return;
         }
+
         if(playerTransform == null)
         {
-            FindPlayer();
+            GetPlayer();
             return;
         }
 
@@ -107,9 +98,9 @@ public class Enemy : MonoBehaviour, IDamageable
     {
         if (!GameManager.Instance.IsGameplay())
         {
-            lastRBForce = rb.totalForce;
+            lastRBForce = rb.velocity;
             rb.isKinematic = true;
-            rb.totalForce = Vector2.zero;
+            rb.velocity = Vector2.zero;
             return false;
         }
         else
@@ -117,7 +108,7 @@ public class Enemy : MonoBehaviour, IDamageable
             if (lastRBForce != Vector2.zero)
             {
                
-                rb.totalForce = lastRBForce;
+                rb.velocity = lastRBForce;
                 lastRBForce = Vector2.zero;
             }
             rb.isKinematic = false;

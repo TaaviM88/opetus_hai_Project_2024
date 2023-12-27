@@ -18,19 +18,38 @@ MonoBehaviour:
   - additionalSpeed: 0
     additionalDamage: 0
     enableAutoFire: 0
+    fireRate: 0.25
   - additionalSpeed: 1
     additionalDamage: 1
     enableAutoFire: 1
+    fireRate: 0.2
   - additionalSpeed: 2
     additionalDamage: 2
     enableAutoFire: 0
+    fireRate: 0.17
   - additionalSpeed: 3
     additionalDamage: 3
     enableAutoFire: 1
+    fireRate: 0.15
   - additionalSpeed: 4
     additionalDamage: 4
     enableAutoFire: 0
+    fireRate: 0.13
   - additionalSpeed: 6
     additionalDamage: 6
     enableAutoFire: 1
+    fireRate: 0.1
+  bulletSpreads:
+  - numberOfBullets: 1
+    angleBetweenBullets: 0
+  - numberOfBullets: 2
+    angleBetweenBullets: 180
+  - numberOfBullets: 3
+    angleBetweenBullets: 60
+  - numberOfBullets: 4
+    angleBetweenBullets: 90
+  - numberOfBullets: 8
+    angleBetweenBullets: 45
+  - numberOfBullets: 36
+    angleBetweenBullets: 10
   bulletSprite: {fileID: 0}

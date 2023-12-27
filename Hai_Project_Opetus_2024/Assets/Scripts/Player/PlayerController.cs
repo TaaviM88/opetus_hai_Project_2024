@@ -17,7 +17,7 @@ public class PlayerController : MonoBehaviour, IDamageable
     public float fireRate = 0.5f; // Bullets per second
     private float nextFireTime = 0f; // When the player is allowed to fire again
     public bool autoFire = false;
-
+    public bool multiShotEnabled = false;
     public int maxHealth = 100;
     public int currentHealth;
     public float invincibilityDuration = 2f; // Duration of iFrames after taking damage
@@ -56,7 +56,7 @@ public class PlayerController : MonoBehaviour, IDamageable
     {
         currentHealth = maxHealth;
         UIManager.Instance.UpdatePlayerHealth(currentHealth, maxHealth);
-        UIManager.Instance.UpdateBulletLevel(bulletUpgradeLevel, bulletData.upgrades.Count - 1);
+        UIManager.Instance.UpdateBulletLevel(bulletUpgradeLevel);
         GameManager.Instance.StartGame(this);
     }
 
@@ -140,10 +140,35 @@ public class PlayerController : MonoBehaviour, IDamageable
         if ((controls.Gameplay.Shoot.triggered || autoFire) && Time.time >= nextFireTime)
         {
             nextFireTime = Time.time + fireRate;
+            
+            if(multiShotEnabled)
+            {
+                MultiShot();
+            }
+            else
+            {
+                NormalShot();
+            }
+        }
+    }
 
+    void MultiShot()
+    {
+        // Get the current bullet spread pattern based on the upgrade level
+        BulletSpread spread = bulletData.bulletSpreads[Mathf.Min(bulletUpgradeLevel, bulletData.bulletSpreads.Count - 1)];
+
+        // Calculate the starting angle
+        float startAngle = -(spread.angleBetweenBullets * (spread.numberOfBullets - 1)) / 2;
+
+        for (int i = 0; i < spread.numberOfBullets; i++)
+        {
+            // Calculate the rotation for this bullet
+            Quaternion rotation = Quaternion.Euler(0, 0, startAngle + (spread.angleBetweenBullets * i));
+
+            // Create the bullet
             GameObject bullet = BulletPoolManager.Instance.GetBullet();
             bullet.transform.position = gunTransform.position;
-            bullet.transform.rotation = gunTransform.rotation;
+            bullet.transform.rotation = gunTransform.rotation * rotation;
 
             // Set the bullet's data and other properties as needed
             Bullet bulletComponent = bullet.GetComponent<Bullet>();
@@ -153,6 +178,21 @@ public class PlayerController : MonoBehaviour, IDamageable
         }
 
     }
+
+    void NormalShot()
+    {
+        nextFireTime = Time.time + fireRate;
+
+        GameObject bullet = BulletPoolManager.Instance.GetBullet();
+        bullet.transform.position = gunTransform.position;
+        bullet.transform.rotation = gunTransform.rotation;
+
+        // Set the bullet's data and other properties as needed
+        Bullet bulletComponent = bullet.GetComponent<Bullet>();
+        bulletComponent.bulletData = bulletData;
+        bulletComponent.upgradeLevel = bulletUpgradeLevel;
+    }
+
 
     private void TogglePause()
     {
@@ -195,6 +235,7 @@ public class PlayerController : MonoBehaviour, IDamageable
         
     }
 
+    
     private void AimWithControllerOrKeyboard()
     {
         // Implement your logic for aiming with the controller or keyboard here
@@ -330,9 +371,11 @@ public class PlayerController : MonoBehaviour, IDamageable
 
     public void IncreaseBulletLevel()
     {
-        bulletUpgradeLevel++;
-        UIManager.Instance.UpdateBulletLevel(bulletUpgradeLevel, bulletData.upgrades.Count - 1);
-        autoFire = bulletData.GetBullet(bulletUpgradeLevel).autoFire;
+        if(bulletUpgradeLevel < bulletData.upgrades.Count)
+            bulletUpgradeLevel++;
 
+        UIManager.Instance.UpdateBulletLevel(bulletUpgradeLevel);
+        autoFire = bulletData.GetBullet(bulletUpgradeLevel).autoFire;
+        fireRate = bulletData.GetBullet(bulletUpgradeLevel).fireRate;
     }
 }

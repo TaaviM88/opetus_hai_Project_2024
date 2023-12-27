@@ -10,7 +10,7 @@ public class BulletUpgradePickUp : PickUp
         PlayerController player = playerTransform.gameObject.GetComponent<PlayerController>(); // Find the player in the scene
         if (player != null)
         {
-            player.IncreaseBulletLevel();    
+            player.IncreaseBulletLevel();       
         }
 
         Destroy(gameObject); // Use this if you're not pooling

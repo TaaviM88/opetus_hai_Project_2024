@@ -88,9 +88,8 @@ public class UIManager : MonoBehaviour
         UpdateScoreDisplay();
     }
 
-    public void UpdateBulletLevel(int bulletLvl, int maxLvl)
+    public void UpdateBulletLevel(int bulletLvl)
     {
-        playerBulletLVLSlider.maxValue = maxLvl;
         playerBulletLVLSlider.value = bulletLvl;
         playerBulletTxt.text = $"WPN:{bulletLvl}";
     }
