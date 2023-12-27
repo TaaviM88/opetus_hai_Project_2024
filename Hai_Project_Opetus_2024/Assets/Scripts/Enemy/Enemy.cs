@@ -11,6 +11,9 @@ public class Enemy : MonoBehaviour, IDamageable
     private ShakeBehavior shake;
     private Transform playerTransform;
     private Rigidbody2D rb;
+    //Animation
+    
+    Animator animator;
     //Health
     private int currentHealth;
     private float currentSpeed;
@@ -32,6 +35,8 @@ public class Enemy : MonoBehaviour, IDamageable
         spriteRenderer = GetComponent<SpriteRenderer>();
         shake = GetComponent<ShakeBehavior>();
         shake.enabled = false;
+
+        animator = GetComponent<Animator>();
 
     }
 
@@ -84,13 +89,28 @@ public class Enemy : MonoBehaviour, IDamageable
 
         if (playerTransform != null)
         {
+
+            Vector2 direction = playerTransform.position - transform.position;
+            float verticalMovement = Mathf.Abs(direction.y);
+            float horizontalMovement = Mathf.Abs(direction.x);
+
             // Determine if the player is to the left or right of the enemy
             bool playerIsToLeft = playerTransform.position.x < transform.position.x;
-
-            // If the enemy is moving to the right but the player is to the left, or vice versa, flip the sprite
             spriteRenderer.flipX = playerIsToLeft;
 
-            // If your sprite faces left by default and you want it to face the player, you might need to use !playerIsToLeft instead
+            // Determine if the enemy should be in the "Swim Top" or "Swim Side" animation
+            if (verticalMovement > horizontalMovement)
+            {
+                // Enemy is moving more vertically
+                animator.SetBool("IsMovingVertically", false);
+                spriteRenderer.flipY = direction.y < 0; // Flip if moving down
+            }
+            else
+            {
+                // Enemy is moving more horizontally
+                animator.SetBool("IsMovingVertically", true);
+                spriteRenderer.flipY = false; // Ensure it's not flipped when moving horizontally
+            }
         }
     }
 
