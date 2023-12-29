@@ -30,6 +30,11 @@ public class PlayerController : MonoBehaviour, IDamageable
     public float flashDuration = 1f; // Total time to keep flashing
     public float flashDelay = 0.1f; // Time between each flash
     private SpriteRenderer spriteRenderer; // Assign this in the inspector
+                                           // Particle effect 
+    public ParticleSystem particleEffect; // Assign this in the inspector
+    public Vector2 effectOffsetSide; // Offset when the player is facing sideways
+    public Vector2 effectOffsetTop; // Offset when the player is facing upwards
+
 
     private Master controls;
 
@@ -112,7 +117,53 @@ public class PlayerController : MonoBehaviour, IDamageable
                 isInvincible = false;
             }
         }
+
+        UpdateParticleEffectPosition();
     }
+
+    private void UpdateParticleEffectPosition()
+    {
+        // Original rotation of the particle effect
+        Quaternion originalRotation = Quaternion.Euler(0, 270, 0);
+
+        if (spriteRenderer.sprite == sideSprite)
+        {
+            // When the player is facing sideways
+            particleEffect.transform.localPosition = effectOffsetSide;
+
+            // Calculate the adjusted rotation based on the player's flip state
+            float rotationYAdjustment = spriteRenderer.flipX ? 180f : 0f; // Flip 180 degrees if facing left
+            Quaternion adjustedRotation = originalRotation * Quaternion.Euler(0, rotationYAdjustment, 0);
+
+            // Apply the adjusted rotation
+            particleEffect.transform.localRotation = adjustedRotation;
+
+            // Adjust the position if the sprite is flipped horizontally (facing left)
+            if (spriteRenderer.flipX)
+            {
+                particleEffect.transform.localPosition = new Vector2(-effectOffsetSide.x, effectOffsetSide.y);
+            }
+        }
+        else if (spriteRenderer.sprite == topSprite)
+        {
+            // When the player is facing upwards or downwards
+            particleEffect.transform.localPosition = effectOffsetTop;
+
+            // Calculate the adjusted rotation based on the player's flip state
+            float rotationZAdjustment = spriteRenderer.flipY ? 270 :90f; // Flip 180 degrees if facing down
+            Quaternion adjustedRotation = originalRotation * Quaternion.Euler(rotationZAdjustment, 0,0 );
+
+            // Apply the adjusted rotation
+            particleEffect.transform.localRotation = adjustedRotation;
+
+            // Adjust the position if the sprite is flipped vertically (facing downwards)
+            if (spriteRenderer.flipY)
+            {
+                particleEffect.transform.localPosition = new Vector2(effectOffsetTop.x, -effectOffsetTop.y);
+            }
+        }
+    }
+
 
     bool CheckGameState()
     {
@@ -171,9 +222,9 @@ public class PlayerController : MonoBehaviour, IDamageable
             bullet.transform.rotation = gunTransform.rotation * rotation;
 
             // Set the bullet's data and other properties as needed
-            Bullet bulletComponent = bullet.GetComponent<Bullet>();
-            bulletComponent.bulletData = bulletData;
-            bulletComponent.upgradeLevel = bulletUpgradeLevel;
+            bullet.GetComponent<Bullet>().FireBullet(bulletData, bulletUpgradeLevel);
+            // Bullet bulletComponent = bullet.GetComponent<Bullet>();
+
 
         }
 
@@ -181,7 +232,6 @@ public class PlayerController : MonoBehaviour, IDamageable
 
     void NormalShot()
     {
-        nextFireTime = Time.time + fireRate;
 
         GameObject bullet = BulletPoolManager.Instance.GetBullet();
         bullet.transform.position = gunTransform.position;
@@ -189,8 +239,7 @@ public class PlayerController : MonoBehaviour, IDamageable
 
         // Set the bullet's data and other properties as needed
         Bullet bulletComponent = bullet.GetComponent<Bullet>();
-        bulletComponent.bulletData = bulletData;
-        bulletComponent.upgradeLevel = bulletUpgradeLevel;
+        bullet.GetComponent<Bullet>().FireBullet(bulletData, bulletUpgradeLevel);
     }
 
 

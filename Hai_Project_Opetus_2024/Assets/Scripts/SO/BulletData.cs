@@ -40,7 +40,7 @@ public class BulletData : ScriptableObject
     public List<BulletUpgradeLevel> upgrades;
     public List<BulletSpread> bulletSpreads; // Define this list in the Unity Editor
 
-    public Sprite bulletSprite;
+
    
     public UpgradedBullet GetBullet(int upgradeLevel)
     {

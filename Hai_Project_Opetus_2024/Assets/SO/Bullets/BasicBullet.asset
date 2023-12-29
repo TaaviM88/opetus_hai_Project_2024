@@ -42,14 +42,13 @@ MonoBehaviour:
   bulletSpreads:
   - numberOfBullets: 1
     angleBetweenBullets: 0
-  - numberOfBullets: 2
-    angleBetweenBullets: 180
+  - numberOfBullets: 1
+    angleBetweenBullets: 0
   - numberOfBullets: 3
     angleBetweenBullets: 60
   - numberOfBullets: 4
     angleBetweenBullets: 90
+  - numberOfBullets: 6
+    angleBetweenBullets: 60
   - numberOfBullets: 8
     angleBetweenBullets: 45
-  - numberOfBullets: 36
-    angleBetweenBullets: 10
-  bulletSprite: {fileID: 0}

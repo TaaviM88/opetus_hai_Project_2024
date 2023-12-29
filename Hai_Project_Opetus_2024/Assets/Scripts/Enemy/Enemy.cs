@@ -2,6 +2,9 @@ using System.Collections;
 using System.Collections.Generic;
 using UnityEngine;
 using TMPro;
+using static UnityEditor.Searcher.SearcherWindow.Alignment;
+
+
 public class Enemy : MonoBehaviour, IDamageable
 {
     public EnemyData enemyData { get; set; } // Assign this in the inspector or when spawning the enemy
@@ -14,6 +17,11 @@ public class Enemy : MonoBehaviour, IDamageable
     //Animation
     
     Animator animator;
+
+    // COllision
+
+    public BoxCollider2D boxColliderSide;
+    public BoxCollider2D boxColliderTop;
     //Health
     private int currentHealth;
     private float currentSpeed;
@@ -28,6 +36,7 @@ public class Enemy : MonoBehaviour, IDamageable
     public float dashDuration = 0.5f; // How long the dash lasts
     private float attackTimer = 0f; // Timer to track cooldowns
     private bool isDashing = false; // Is the enemy currently dashing?
+
 
     private void Awake()
     {
@@ -102,15 +111,21 @@ public class Enemy : MonoBehaviour, IDamageable
             // Determine if the enemy should be in the "Swim Top" or "Swim Side" animation
             if (verticalMovement > horizontalMovement)
             {
+
                 // Enemy is moving more vertically
                 animator.SetBool("IsMovingVertically", false);
                 spriteRenderer.flipY = direction.y < 0; // Flip if moving down
+                boxColliderSide.enabled = false;
+                boxColliderTop.enabled = true;
+
             }
             else
             {
                 // Enemy is moving more horizontally
                 animator.SetBool("IsMovingVertically", true);
                 spriteRenderer.flipY = false; // Ensure it's not flipped when moving horizontally
+                boxColliderTop.enabled = false;
+                boxColliderSide.enabled = true;
             }
         }
     }
@@ -146,7 +161,8 @@ public class Enemy : MonoBehaviour, IDamageable
         Collider2D collider = GetComponent<Collider2D>();
         bool originalTriggerState = collider.isTrigger;
         collider.isTrigger = true;
-
+        boxColliderSide.isTrigger = true;
+        boxColliderTop.isTrigger = true;
         Vector2 targetDirection = (playerTransform.position - transform.position).normalized;
 
         while (Time.time < startTime + dashDuration)
@@ -160,6 +176,8 @@ public class Enemy : MonoBehaviour, IDamageable
         rb.velocity = Vector2.zero;
         isDashing = false;
         collider.isTrigger = originalTriggerState;
+        boxColliderSide.isTrigger = originalTriggerState;
+        boxColliderTop.isTrigger = originalTriggerState;
         attackTimer = attackCooldown; // Reset the attack cooldown
     }
 

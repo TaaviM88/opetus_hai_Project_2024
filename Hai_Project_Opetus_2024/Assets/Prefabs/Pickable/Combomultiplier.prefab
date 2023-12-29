@@ -13,7 +13,7 @@ GameObject:
   - component: {fileID: 3622255168082214772}
   - component: {fileID: 2491760894557917966}
   m_Layer: 0
-  m_Name: Combomultiplayer
+  m_Name: Combomultiplier
   m_TagString: Untagged
   m_Icon: {fileID: 0}
   m_NavMeshLayer: 0

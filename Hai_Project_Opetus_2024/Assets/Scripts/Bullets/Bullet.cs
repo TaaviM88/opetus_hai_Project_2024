@@ -8,38 +8,36 @@ public class Bullet : MonoBehaviour
     public bool useSprite = false;
 
     public int upgradeLevel { get; set;}
-    private float lifespan = 5f; // How long the bullet should live in seconds
+    [SerializeField]
+    private float lifespan = 2.5f; // How long the bullet should live in seconds
     private float lifeTimer; // The countdown timer
-    private void Start()
-    {
-        if(useSprite)
-        {
-            GetComponent<SpriteRenderer>().sprite = bulletData.bulletSprite;
-        }
-    }
+    private float currentSpeed;
+    private int currentDamage;
+
 
     private void OnEnable()
     {
+
+    }
+
+    public void FireBullet(BulletData b, int upgrade)
+    {
+        bulletData = b;
+        upgradeLevel = upgrade;
         lifeTimer = lifespan;
+        var upgradedBullet = bulletData.GetBullet(upgradeLevel);
+        currentSpeed = upgradedBullet.currenSpeed;
+        currentDamage = upgradedBullet.currentDamage;
+        StartCoroutine(BulletLifespanCoroutine());
     }
 
     void Update()
     {
         if (!GameManager.Instance.IsGameplay()) return;
         // Move the bullet forward
-        if (bulletData != null)
-        {
-            transform.Translate(Vector3.up *  -1 * bulletData.GetBullet(upgradeLevel).currenSpeed * Time.deltaTime);
-        }
 
+        transform.Translate(Vector3.up * -1 * currentSpeed * Time.deltaTime);
 
-        // Count down the life timer
-        lifeTimer -= Time.deltaTime;
-        if (lifeTimer <= 0)
-        {
-            // Time's up, return the bullet to the pool
-            BulletPoolManager.Instance.ReturnBullet(gameObject);
-        }
     }
 
     private void OnTriggerEnter2D(Collider2D collision)
@@ -49,9 +47,20 @@ public class Bullet : MonoBehaviour
         if (damageable != null )
         {
             damageable.TakeDamage(bulletData.GetBullet(upgradeLevel).currentDamage); // Assuming each bullet does 1 damage
+            StopAllCoroutines();
             BulletPoolManager.Instance.ReturnBullet(gameObject); // Return the bullet to the pool
         }
     }
 
+    private IEnumerator BulletLifespanCoroutine()
+    {
+        yield return new WaitForSeconds(lifespan);
+        BulletPoolManager.Instance.ReturnBullet(gameObject);
+    }
 
+    private void OnDisable()
+    {
+        // It's good practice to stop coroutines when the object is disabled to clean up
+        StopAllCoroutines();
+    }
 }
